@@ -20,7 +20,7 @@
 ### ⚙️ // CI/CD PIPELINE MATRIX: BUILD RUNNER
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/OKOLIMO-Joseph/OKOLIMO-Joseph/main/generated/commit-pipeline.svg" alt="Joseph Okolimo GitHub Contribution CI/CD Pipeline Matrix" width="100%" />
+  <img src="https://raw.githubusercontent.com/OKOLIMO-Joseph/OKOLIMO-Joseph/main/generated/commit-pipeline.svg?v=2" alt="Joseph Okolimo GitHub Contribution CI/CD Pipeline Matrix" width="100%" />
 </p>
 
 <p align="center">
