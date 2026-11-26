@@ -1,7 +1,7 @@
 <div align="center">
 
 # Joseph Okolimo
-### Full-Stack Software Engineer • Cloud Architecture • Distributed Systems
+### Full-Stack Software Engineer • AI Engineer • Cyber Security & Digital Forensics
 
 [![GitHub](https://img.shields.io/badge/GitHub-OKOLIMO--Joseph-181717?style=flat-square&logo=github)](https://github.com/OKOLIMO-Joseph)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-okolimo--joseph-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/okolimo-joseph)
@@ -9,22 +9,22 @@
 [![Status](https://img.shields.io/badge/Availability-Full--Stack_%26_SWE_Roles-059669?style=flat-square)](mailto:okolimojoseph1@gmail.com)
 
 <p align="center">
-  <sub>Full-stack engineer crafting high-performance web applications, scalable APIs, and containerized cloud systems.</sub><br/>
-  <sub>BSc Information Technology (First Class Honours, 4.68 / 5.00 CGPA) • Integrating MSc Cyber Security & Forensics for secure-by-design architecture.</sub>
+  <sub>Full-stack and AI systems engineer crafting high-performance applications, intelligent workflows, and scalable architectures.</sub><br/>
+  <sub>BSc Information Technology (First Class Honours, 4.68 / 5.00 CGPA) • MSc Cyber Security & Digital Forensics (Building resilient, secure-by-design systems).</sub>
 </p>
 
 </div>
 
 ---
 
-### 🌿 // GIT GRAPH & MERGE FLOW
+### 🌿 // GIT COMMITS & MERGE FLOW
 
 <p align="center">
-  <img src="generated/commit-gitgraph.svg" alt="Joseph Okolimo Git Graph &amp; Merge Tree" width="100%" />
+  <img src="generated/commit-gitgraph.svg" alt="Joseph Okolimo Git Commits &amp; Branch Merge Flow" width="100%" />
 </p>
 
 <p align="center">
-  <sub>Continuous feature branch releases merging into <code>main</code> across 358 verified commits.</sub>
+  <sub>Live feature branch commits merging into <code>main</code> across 359 verified contributions.</sub>
 </p>
 
 ---

@@ -4,7 +4,7 @@ import { generateDemoContributions } from '../scripts/lib/fetch-contributions.mj
 import { normalizeContributionData } from '../scripts/lib/normalize-data.mjs';
 import { renderGitGraphSvg } from '../scripts/lib/render-svg.mjs';
 
-test('renderGitGraphSvg generates valid SVG markup with Git branches, commit nodes, and merge curves', () => {
+test('renderGitGraphSvg generates valid SVG markup with Git branch commits and merge curves', () => {
   const demo = generateDemoContributions();
   const normalized = normalizeContributionData(demo);
   const svg = renderGitGraphSvg(normalized);
@@ -15,7 +15,7 @@ test('renderGitGraphSvg generates valid SVG markup with Git branches, commit nod
   assert.ok(svg.includes('</svg>'), 'Should have closing svg tag');
 
   // Verify technical elements
-  assert.ok(svg.includes('// GIT GRAPH'), 'Should include title');
+  assert.ok(svg.includes('// GIT COMMITS &amp; MERGE FLOW'), 'Should include commit-focused title');
   assert.ok(svg.includes('track-main'), 'Should render main trunk');
   assert.ok(svg.includes('track-hoscover'), 'Should render hoscover branch');
   assert.ok(svg.includes('track-docwiser'), 'Should render docwiser branch');

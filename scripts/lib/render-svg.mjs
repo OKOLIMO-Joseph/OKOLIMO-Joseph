@@ -33,7 +33,7 @@ function escapeXml(str) {
 }
 
 /**
- * Generates an animated Git Branch & Merge Tree SVG representation of contributions.
+ * Generates an animated Git Commits & Branch Merge Tree SVG representation of contributions.
  */
 export function renderGitGraphSvg(normalized, options = {}) {
   const { grid, stats, numWeeks } = normalized;
@@ -57,7 +57,7 @@ export function renderGitGraphSvg(normalized, options = {}) {
     const colX = Math.round(startX + c * cellPitch);
     for (let r = 0; r < 7; r++) {
       const cell = grid[r][c];
-      const y = Math.round(heatmapY + r * 4.5); // Micro height: 3.5px per day
+      const y = Math.round(heatmapY + r * 4.5);
       const score = cell.score;
       const fill = HEATMAP_PALETTE[score] || HEATMAP_PALETTE[0];
       const tooltip = `${cell.count} commit${cell.count === 1 ? '' : 's'} on ${cell.date || 'date'}`;
@@ -136,15 +136,15 @@ export function renderGitGraphSvg(normalized, options = {}) {
   <!-- Top Accent Stripe -->
   <rect x="2" y="2" width="${svgWidth - 4}" height="3" rx="1.5" fill="url(#header-line)" />
 
-  <!-- Technical Header Strip -->
+  <!-- Technical Header Strip (Commit-focused title) -->
   <g transform="translate(24, 28)">
     <rect x="0" y="0" width="8" height="8" rx="1.5" fill="#00f2fe" filter="url(#subtle-glow)" />
-    <text x="16" y="8" class="terminal-title">// GIT GRAPH &amp; MERGE TREE</text>
-    <text x="235" y="8" class="badge-sub">v5.0 [RELEASE FLOW]</text>
+    <text x="16" y="8" class="terminal-title">// GIT COMMITS &amp; MERGE FLOW</text>
+    <text x="250" y="8" class="badge-sub">v5.0 [${totalContributions} VERIFIED COMMITS]</text>
 
     <!-- Top Right Telemetry Stats -->
     <text x="${svgWidth - 48}" y="8" text-anchor="end" class="stats-text">
-      REPO: <tspan class="stats-val">OKOLIMO-Joseph</tspan>  |  COMMITS: <tspan class="stats-val">${totalContributions} MERGED</tspan>  |  BRANCHES: <tspan class="stats-val" fill="#10b981">5 ACTIVE</tspan>
+      REPO: <tspan class="stats-val">OKOLIMO-Joseph</tspan>  |  COMMITS: <tspan class="stats-val">${totalContributions} RECORDED</tspan>  |  BRANCHES: <tspan class="stats-val" fill="#10b981">5 ACTIVE</tspan>
     </text>
   </g>
 
@@ -221,7 +221,6 @@ export function renderGitGraphSvg(normalized, options = {}) {
   </g>
 
   <!-- ==================== REAL COMMIT NODES ==================== -->
-  <!-- Nodes on Main -->
   <circle cx="140" cy="78" r="5" fill="#0f172a" stroke="${PALETTE.main}" stroke-width="2.5" />
   <circle cx="210" cy="78" r="5" fill="#0f172a" stroke="${PALETTE.main}" stroke-width="2.5" />
   <circle cx="280" cy="78" r="5" fill="#0f172a" stroke="${PALETTE.main}" stroke-width="2.5" />
@@ -248,16 +247,12 @@ export function renderGitGraphSvg(normalized, options = {}) {
   </g>
 
   <!-- Feature Branch Commit Nodes -->
-  <!-- Hoscover Nodes -->
   <circle cx="230" cy="118" r="4.5" fill="#0f172a" stroke="${PALETTE.hoscover}" stroke-width="2" />
   <circle cx="290" cy="118" r="4.5" fill="#0f172a" stroke="${PALETTE.hoscover}" stroke-width="2" />
-  <!-- DocWiser Nodes -->
   <circle cx="370" cy="156" r="4.5" fill="#0f172a" stroke="${PALETTE.docwiser}" stroke-width="2" />
   <circle cx="430" cy="156" r="4.5" fill="#0f172a" stroke="${PALETTE.docwiser}" stroke-width="2" />
-  <!-- UEMS Nodes -->
   <circle cx="530" cy="192" r="4.5" fill="#0f172a" stroke="${PALETTE.uems}" stroke-width="2" />
   <circle cx="600" cy="192" r="4.5" fill="#0f172a" stroke="${PALETTE.uems}" stroke-width="2" />
-  <!-- MoMo Nodes -->
   <circle cx="670" cy="228" r="4.5" fill="#0f172a" stroke="${PALETTE.momo}" stroke-width="2" />
   <circle cx="740" cy="228" r="4.5" fill="#0f172a" stroke="${PALETTE.momo}" stroke-width="2" />
 
@@ -265,10 +260,10 @@ export function renderGitGraphSvg(normalized, options = {}) {
   <line x1="24" y1="242" x2="${svgWidth - 24}" y2="242" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3" />
   <g id="micro-heatmap">${microHeatmapSvg}</g>
 
-  <!-- Footer Technical Strip -->
+  <!-- Footer Technical Strip: Commit Flow Legend -->
   <g transform="translate(24, ${svgHeight - 14})">
     <text x="0" y="8" class="legend-text" fill="#64748b">
-      FLOW: [ <tspan fill="#00f2fe">● MAIN</tspan> · <tspan fill="#10b981">● HOSCOVER</tspan> · <tspan fill="#38bdf8">● DOCWISER</tspan> · <tspan fill="#818cf8">● UCU-UEMS</tspan> · <tspan fill="#f43f5e">● MOMO-SEC</tspan> ]
+      COMMITS: [ <tspan fill="#00f2fe">● MAIN</tspan> · <tspan fill="#10b981">● HOSCOVER</tspan> · <tspan fill="#38bdf8">● DOCWISER</tspan> · <tspan fill="#818cf8">● UCU-UEMS</tspan> · <tspan fill="#f43f5e">● MOMO-SEC</tspan> ]
     </text>
 
     <g transform="translate(${svgWidth - 270}, 0)">
@@ -278,14 +273,9 @@ export function renderGitGraphSvg(normalized, options = {}) {
       <rect x="24" y="0" width="8" height="8" rx="1.5" fill="${HEATMAP_PALETTE[2]}" stroke="#38bdf8" stroke-width="0.8" />
       <rect x="36" y="0" width="8" height="8" rx="1.5" fill="${HEATMAP_PALETTE[3]}" stroke="#818cf8" stroke-width="0.8" />
       <rect x="48" y="0" width="8" height="8" rx="1.5" fill="${HEATMAP_PALETTE[4]}" stroke="#ffffff" stroke-width="0.8" />
-      <text x="64" y="8" class="legend-text">MORE ACTIVITY</text>
+      <text x="64" y="8" class="legend-text">MORE COMMITS</text>
     </g>
   </g>
 </svg>
 `;
 }
-
-// Keep aliases for backwards compatibility
-export const renderPipelineSvg = renderGitGraphSvg;
-export const renderBreakoutSvg = renderGitGraphSvg;
-export const renderTetrisSvg = renderGitGraphSvg;
