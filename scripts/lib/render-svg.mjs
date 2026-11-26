@@ -1,44 +1,40 @@
 /**
- * Cybersecurity / Technical Tetris color scheme mapped by intensity level (0-4).
+ * High-contrast cybersecurity / Tetris color palette mapped by contribution level (0-4).
+ * Designed for maximum visibility against dark terminal backgrounds.
  */
 const PALETTE = {
-  // Empty matrix slot
+  // Level 0: Empty matrix slot
   0: {
-    fill: '#101623',
+    fill: '#0f172a',
     stroke: '#1e293b',
-    glow: 'none'
+    line: '#334155'
   },
-  // Level 1: Low activity (Deep Emerald / Cyan)
+  // Level 1: Low activity (Deep Emerald)
   1: {
     fill: '#064e3b',
-    stroke: '#059669',
-    glow: 'rgba(5, 150, 105, 0.4)'
+    stroke: '#10b981',
+    line: '#34d399'
   },
-  // Level 2: Moderate activity (Electric Teal / Sky)
+  // Level 2: Moderate activity (Electric Teal)
   2: {
     fill: '#0284c7',
     stroke: '#38bdf8',
-    glow: 'rgba(56, 189, 248, 0.5)'
+    line: '#7dd3fc'
   },
-  // Level 3: High activity (Cobalt / Indigo Pulse)
+  // Level 3: High activity (Cobalt Pulse)
   3: {
     fill: '#4f46e5',
     stroke: '#818cf8',
-    glow: 'rgba(129, 140, 248, 0.6)'
+    line: '#a5b4fc'
   },
-  // Level 4: Hyper-activity / Tetris Line Clear (Neon Cyan / High Contrast)
+  // Level 4: Hyper-activity (Neon Cyan / Line Clear)
   4: {
     fill: '#00f2fe',
-    stroke: '#e0f2fe',
-    glow: 'rgba(0, 242, 254, 0.85)'
+    stroke: '#ffffff',
+    line: '#e0f2fe'
   }
 };
 
-/**
- * Escapes XML strings for safe SVG attribute and text insertion.
- * @param {string} str 
- * @returns {string}
- */
 function escapeXml(str) {
   if (typeof str !== 'string') return String(str);
   return str
@@ -51,30 +47,27 @@ function escapeXml(str) {
 
 /**
  * Generates an animated, responsive, high-contrast SVG representation of GitHub contributions.
- * @param {object} normalized Normalized data from normalizeContributionData
- * @param {object} options Optional configurations (e.g. animationDuration, username)
- * @returns {string} Standalone SVG XML string
+ * Uses native SMIL animations (<animateTransform>, <animate>) for reliable rendering inside GitHub Camo.
+ * Blocks are guaranteed visible by default (no opacity: 0 traps).
  */
 export function renderTetrisSvg(normalized, options = {}) {
   const { grid, stats, numWeeks } = normalized;
   const username = options.username || 'OKOLIMO-Joseph';
   const totalContributions = stats.totalContributions || 0;
   const activeDays = stats.activeDays || 0;
-  const maxDayCount = stats.maxDailyCount || 0;
   const longestStreak = stats.longestStreak || 0;
 
   const svgWidth = 920;
-  const svgHeight = 275;
-  const cellPitch = 15.2; // cell width + gap
+  const svgHeight = 280;
+  const cellPitch = 15.2;
   const cellSize = 12;
   const gridWidth = numWeeks * cellPitch - (cellPitch - cellSize);
   const startX = Math.round((svgWidth - gridWidth) / 2);
   const startY = 82;
-  const animCycle = options.duration || 10; // 10 second animation loop
+  const loopDuration = options.duration || 8; // 8-second repeating cycle
 
-  // Pre-generate SVG blocks
   let baseGridSvg = '';
-  let activeFallingBlocksSvg = '';
+  let activeBlocksSvg = '';
 
   for (let c = 0; c < numWeeks; c++) {
     const colX = Math.round(startX + c * cellPitch);
@@ -84,28 +77,96 @@ export function renderTetrisSvg(normalized, options = {}) {
       const y = Math.round(startY + r * cellPitch);
       const score = cell.score;
 
-      // 1. Static base slot (always visible as the background matrix grid)
-      baseGridSvg += `<rect x="${colX}" y="${y}" width="${cellSize}" height="${cellSize}" rx="2" fill="${PALETTE[0].fill}" stroke="${PALETTE[0].stroke}" stroke-width="0.8" opacity="0.6"/>\n`;
+      // 1. Static base slot
+      baseGridSvg += `<rect x="${colX}" y="${y}" width="${cellSize}" height="${cellSize}" rx="2" fill="${PALETTE[0].fill}" stroke="${PALETTE[0].stroke}" stroke-width="0.8" opacity="0.7"/>\n`;
 
-      // 2. Active falling contribution block
+      // 2. Active contribution block
       if (score > 0) {
         const palette = PALETTE[score];
-        // Stagger delays based on column and row to simulate falling Tetris drops
-        // Drops cascade left-to-right across the weeks
-        const delay = ((c / numWeeks) * (animCycle * 0.58) + (r * 0.05)).toFixed(2);
         const countTooltip = `${cell.count} contribution${cell.count === 1 ? '' : 's'} on ${cell.date || 'date'}`;
+        // Delay calculated so blocks drop in a wave from left to right
+        const dropDelay = ((c / numWeeks) * (loopDuration * 0.45) + (r * 0.04)).toFixed(2);
 
-        activeFallingBlocksSvg += `
-        <g class="block-anim block-c${c}-r${r}" style="animation-delay: ${delay}s;" transform="translate(${colX}, ${y})">
+        // SMIL <animateTransform> drops the block into position then locks it in place
+        activeBlocksSvg += `
+        <g transform="translate(${colX}, ${y})">
           <title>${escapeXml(countTooltip)}</title>
-          <rect x="0" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="${palette.fill}" stroke="${palette.stroke}" stroke-width="1.2"/>
-          <line x1="2" y1="2" x2="${cellSize - 2}" y2="2" stroke="${palette.stroke}" stroke-width="0.8" stroke-opacity="0.7"/>
+          <g>
+            <animateTransform
+              attributeName="transform"
+              type="translate"
+              values="0,-75; 0,0; 0,-3; 0,0; 0,0; 0,0"
+              keyTimes="0; 0.18; 0.22; 0.26; 0.92; 1"
+              dur="${loopDuration}s"
+              begin="${dropDelay}s"
+              repeatCount="indefinite"
+            />
+            <rect x="0" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="${palette.fill}" stroke="${palette.stroke}" stroke-width="1.2" />
+            <line x1="2" y1="2" x2="${cellSize - 2}" y2="2" stroke="${palette.line}" stroke-width="0.8" stroke-opacity="0.8" />
+          </g>
         </g>`;
       }
     }
   }
 
-  // Weekday indicators for Sun (0), Tue (2), Thu (4)
+  // Animated falling Tetromino pieces (I, O, T, L) that drop over active columns
+  const tetrominoesSvg = `
+    <!-- Falling T-Tetromino -->
+    <g>
+      <animateTransform
+        attributeName="transform"
+        type="translate"
+        values="${startX + 28 * cellPitch},25; ${startX + 28 * cellPitch},${startY + 3 * cellPitch}"
+        keyTimes="0; 1"
+        dur="3.2s"
+        begin="0.5s"
+        repeatCount="indefinite"
+      />
+      <animate attributeName="opacity" values="0; 1; 1; 0" keyTimes="0; 0.15; 0.85; 1" dur="3.2s" begin="0.5s" repeatCount="indefinite" />
+      <rect x="0" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="#818cf8" stroke="#ffffff" stroke-width="0.8" />
+      <rect x="${cellPitch}" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="#818cf8" stroke="#ffffff" stroke-width="0.8" />
+      <rect x="${cellPitch * 2}" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="#818cf8" stroke="#ffffff" stroke-width="0.8" />
+      <rect x="${cellPitch}" y="${cellPitch}" width="${cellSize}" height="${cellSize}" rx="2" fill="#818cf8" stroke="#ffffff" stroke-width="0.8" />
+    </g>
+
+    <!-- Falling I-Tetromino -->
+    <g>
+      <animateTransform
+        attributeName="transform"
+        type="translate"
+        values="${startX + 44 * cellPitch},20; ${startX + 44 * cellPitch},${startY + 2 * cellPitch}"
+        keyTimes="0; 1"
+        dur="2.8s"
+        begin="2s"
+        repeatCount="indefinite"
+      />
+      <animate attributeName="opacity" values="0; 1; 1; 0" keyTimes="0; 0.15; 0.85; 1" dur="2.8s" begin="2s" repeatCount="indefinite" />
+      <rect x="0" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="#00f2fe" stroke="#ffffff" stroke-width="0.8" />
+      <rect x="0" y="${cellPitch}" width="${cellSize}" height="${cellSize}" rx="2" fill="#00f2fe" stroke="#ffffff" stroke-width="0.8" />
+      <rect x="0" y="${cellPitch * 2}" width="${cellSize}" height="${cellSize}" rx="2" fill="#00f2fe" stroke="#ffffff" stroke-width="0.8" />
+      <rect x="0" y="${cellPitch * 3}" width="${cellSize}" height="${cellSize}" rx="2" fill="#00f2fe" stroke="#ffffff" stroke-width="0.8" />
+    </g>
+
+    <!-- Falling O-Tetromino -->
+    <g>
+      <animateTransform
+        attributeName="transform"
+        type="translate"
+        values="${startX + 14 * cellPitch},30; ${startX + 14 * cellPitch},${startY + 4 * cellPitch}"
+        keyTimes="0; 1"
+        dur="3.6s"
+        begin="4s"
+        repeatCount="indefinite"
+      />
+      <animate attributeName="opacity" values="0; 1; 1; 0" keyTimes="0; 0.15; 0.85; 1" dur="3.6s" begin="4s" repeatCount="indefinite" />
+      <rect x="0" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="#facc15" stroke="#ffffff" stroke-width="0.8" />
+      <rect x="${cellPitch}" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="#facc15" stroke="#ffffff" stroke-width="0.8" />
+      <rect x="0" y="${cellPitch}" width="${cellSize}" height="${cellSize}" rx="2" fill="#facc15" stroke="#ffffff" stroke-width="0.8" />
+      <rect x="${cellPitch}" y="${cellPitch}" width="${cellSize}" height="${cellSize}" rx="2" fill="#facc15" stroke="#ffffff" stroke-width="0.8" />
+    </g>
+  `;
+
+  // Weekday indicators
   const weekdaysSvg = `
     <text x="${startX - 12}" y="${startY + 0 * cellPitch + 9.5}" text-anchor="end" class="matrix-label">SUN</text>
     <text x="${startX - 12}" y="${startY + 2 * cellPitch + 9.5}" text-anchor="end" class="matrix-label">TUE</text>
@@ -113,7 +174,6 @@ export function renderTetrisSvg(normalized, options = {}) {
     <text x="${startX - 12}" y="${startY + 6 * cellPitch + 9.5}" text-anchor="end" class="matrix-label">SAT</text>
   `;
 
-  // SVG Assembly with full CSS Keyframe animation embedded
   return `<?xml version="1.0" encoding="utf-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgWidth} ${svgHeight}" width="100%" height="100%">
   <defs>
@@ -124,8 +184,8 @@ export function renderTetrisSvg(normalized, options = {}) {
     </linearGradient>
 
     <linearGradient id="header-line" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.8" />
-      <stop offset="50%" stop-color="#3b82f6" stop-opacity="0.5" />
+      <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#3b82f6" stop-opacity="0.6" />
       <stop offset="100%" stop-color="#6366f1" stop-opacity="0.1" />
     </linearGradient>
 
@@ -164,69 +224,13 @@ export function renderTetrisSvg(normalized, options = {}) {
       font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
       font-size: 8.5px;
       font-weight: 600;
-      fill: #475569;
+      fill: #64748b;
       letter-spacing: 0.5px;
     }
     .legend-text {
       font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
       font-size: 9.5px;
-      fill: #64748b;
-    }
-
-    /* Falling Tetris Animation */
-    .block-anim {
-      transform-box: fill-box;
-      transform-origin: center;
-      opacity: 0;
-      animation-name: tetrisDrop;
-      animation-duration: ${animCycle}s;
-      animation-iteration-count: infinite;
-      animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    @keyframes tetrisDrop {
-      0% {
-        opacity: 0;
-        transform: translate(0, -60px) scale(0.9);
-      }
-      3% {
-        opacity: 0.9;
-      }
-      8% {
-        opacity: 1;
-        transform: translate(0, 0px) scale(1);
-      }
-      9.5% {
-        transform: translate(0, -2.5px) scale(1.04);
-      }
-      11% {
-        transform: translate(0, 0px) scale(1);
-      }
-      /* Settle on grid until cycle completes */
-      88% {
-        opacity: 1;
-        filter: brightness(1);
-      }
-      93% {
-        opacity: 0.7;
-        filter: brightness(1.2);
-      }
-      97% {
-        opacity: 0;
-        transform: translate(0, 0px);
-      }
-      100% {
-        opacity: 0;
-        transform: translate(0, -60px);
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .block-anim {
-        animation: none !important;
-        opacity: 1 !important;
-        transform: none !important;
-      }
+      fill: #94a3b8;
     }
   </style>
 
@@ -238,7 +242,6 @@ export function renderTetrisSvg(normalized, options = {}) {
 
   <!-- Technical Header Strip -->
   <g transform="translate(24, 28)">
-    <!-- Terminal Prompt Icon -->
     <rect x="0" y="0" width="8" height="8" rx="1.5" fill="#00f2fe" filter="url(#subtle-glow)" />
     <text x="16" y="8" class="terminal-title">// COMMIT TETRIS</text>
     <text x="162" y="8" class="badge-sub">v2.4 [CONTRIBUTION MATRIX]</text>
@@ -250,7 +253,7 @@ export function renderTetrisSvg(normalized, options = {}) {
   </g>
 
   <!-- Subtle Matrix Baseline / Guard Rails -->
-  <line x1="${startX - 20}" y1="52" x2="${startX + gridWidth + 20}" y2="52" stroke="#1e293b" stroke-width="0.8" stroke-dasharray="4,4" />
+  <line x1="${startX - 20}" y1="55" x2="${startX + gridWidth + 20}" y2="55" stroke="#1e293b" stroke-width="0.8" stroke-dasharray="4,4" />
 
   <!-- Weekday Labels -->
   <g>${weekdaysSvg}</g>
@@ -258,20 +261,21 @@ export function renderTetrisSvg(normalized, options = {}) {
   <!-- Base Grid (Empty Cells) -->
   <g id="base-grid">${baseGridSvg}</g>
 
-  <!-- Animated Falling Tetris Blocks -->
-  <g id="active-blocks">${activeFallingBlocksSvg}</g>
+  <!-- Active Contribution Blocks (Always Visible + Falling Drop Wave) -->
+  <g id="active-blocks">${activeBlocksSvg}</g>
+
+  <!-- Dynamic Falling Tetrominoes -->
+  <g id="falling-tetrominoes">${tetrominoesSvg}</g>
 
   <!-- Bottom Matrix Baseline -->
   <line x1="${startX - 20}" y1="${startY + 7 * cellPitch + 6}" x2="${startX + gridWidth + 20}" y2="${startY + 7 * cellPitch + 6}" stroke="#1e293b" stroke-width="0.8" stroke-dasharray="4,4" />
 
   <!-- Footer Technical Strip: Buffer & Intensity Legend -->
   <g transform="translate(24, ${svgHeight - 24})">
-    <!-- Left: Tetromino Queue Indicator -->
-    <text x="0" y="8" class="legend-text" fill="#475569">
-      BUFFER: [ <tspan fill="#00f2fe">I</tspan> · <tspan fill="#38bdf8">T</tspan> · <tspan fill="#818cf8">Z</tspan> · <tspan fill="#059669">L</tspan> · <tspan fill="#0284c7">O</tspan> ]
+    <text x="0" y="8" class="legend-text" fill="#64748b">
+      BUFFER: [ <tspan fill="#00f2fe">I</tspan> · <tspan fill="#38bdf8">T</tspan> · <tspan fill="#818cf8">Z</tspan> · <tspan fill="#10b981">L</tspan> · <tspan fill="#facc15">O</tspan> ]
     </text>
 
-    <!-- Right: Activity Intensity Legend -->
     <g transform="translate(${svgWidth - 280}, 0)">
       <text x="-8" y="8" text-anchor="end" class="legend-text">LESS</text>
       <rect x="0" y="-1" width="10" height="10" rx="1.5" fill="${PALETTE[0].fill}" stroke="${PALETTE[0].stroke}" stroke-width="0.8" />
