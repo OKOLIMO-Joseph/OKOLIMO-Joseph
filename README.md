@@ -20,11 +20,11 @@
 ### ⚙️ // CI/CD PIPELINE MATRIX: BUILD RUNNER
 
 <p align="center">
-  <img src="generated/commit-pipeline.svg" alt="Joseph Okolimo GitHub Contribution CI/CD Pipeline Matrix" width="100%" />
+  <img src="https://raw.githubusercontent.com/OKOLIMO-Joseph/OKOLIMO-Joseph/main/generated/commit-pipeline.svg" alt="Joseph Okolimo GitHub Contribution CI/CD Pipeline Matrix" width="100%" />
 </p>
 
 <p align="center">
-  <sub>Real-time CI/CD pipeline matrix mapping 354 verified automated builds across 53 weeks.</sub>
+  <sub>Real-time CI/CD pipeline matrix mapping 355 verified automated builds across 53 weeks.</sub>
 </p>
 
 ---
