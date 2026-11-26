@@ -17,14 +17,14 @@
 
 ---
 
-### ⚙️ // CI/CD PIPELINE MATRIX: BUILD RUNNER
+### 🌿 // GIT GRAPH & MERGE FLOW
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/OKOLIMO-Joseph/OKOLIMO-Joseph/main/generated/commit-pipeline.svg?v=2" alt="Joseph Okolimo GitHub Contribution CI/CD Pipeline Matrix" width="100%" />
+  <img src="generated/commit-tetris.svg?v=5" alt="Joseph Okolimo Git Graph &amp; Merge Tree" width="100%" />
 </p>
 
 <p align="center">
-  <sub>Real-time CI/CD pipeline matrix mapping 355 verified automated builds across 53 weeks.</sub>
+  <sub>Continuous feature branch releases merging into <code>main</code> across 355 verified commits.</sub>
 </p>
 
 ---
