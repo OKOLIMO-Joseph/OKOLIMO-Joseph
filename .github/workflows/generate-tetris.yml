@@ -1,4 +1,4 @@
-name: Generate Commit Tetris
+name: Generate Commit Breakout
 
 on:
   schedule:
@@ -16,7 +16,7 @@ permissions:
   contents: write
 
 jobs:
-  build-tetris:
+  build-breakout:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -34,20 +34,20 @@ jobs:
       - name: Execute validation test suite
         run: npm test
 
-      - name: Generate Commit Tetris visualization
+      - name: Generate Commit Breakout visualization
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.repository_owner }}
         run: node scripts/generate-tetris.mjs
 
-      - name: Commit and push updated contribution asset
+      - name: Commit and push updated assets
         run: |
-          if [ -n "$(git status --porcelain generated/commit-tetris.svg)" ]; then
+          if [ -n "$(git status --porcelain generated/)" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add generated/commit-tetris.svg
-            git commit -m "Auto-update Commit Tetris contribution matrix [skip ci]"
+            git add generated/
+            git commit -m "Auto-update Commit Breakout contribution matrix [skip ci]"
             git push
           else
-            echo "No contribution matrix changes detected. Skipping commit."
+            echo "No matrix changes detected. Skipping commit."
           fi

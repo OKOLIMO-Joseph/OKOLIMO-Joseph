@@ -1,9 +1,9 @@
 /**
- * High-contrast cybersecurity / Tetris color palette mapped by contribution level (0-4).
- * Designed for maximum visibility against dark terminal backgrounds.
+ * High-contrast cybersecurity & software engineering palette mapped by contribution level (0-4).
+ * Vibrant neon-tinted bricks optimized for dark backgrounds.
  */
 const PALETTE = {
-  // Level 0: Empty matrix slot
+  // Level 0: Empty brick slot
   0: {
     fill: '#0f172a',
     stroke: '#1e293b',
@@ -21,13 +21,13 @@ const PALETTE = {
     stroke: '#38bdf8',
     line: '#7dd3fc'
   },
-  // Level 3: High activity (Cobalt Pulse)
+  // Level 3: High activity (Cobalt / Indigo Pulse)
   3: {
     fill: '#4f46e5',
     stroke: '#818cf8',
     line: '#a5b4fc'
   },
-  // Level 4: Hyper-activity (Neon Cyan / Line Clear)
+  // Level 4: Hyper-activity / Brick Breaker Critical (Neon Cyan)
   4: {
     fill: '#00f2fe',
     stroke: '#ffffff',
@@ -46,11 +46,11 @@ function escapeXml(str) {
 }
 
 /**
- * Generates an animated, responsive, high-contrast SVG representation of GitHub contributions.
- * Uses native SMIL animations (<animateTransform>, <animate>) for reliable rendering inside GitHub Camo.
- * Blocks are guaranteed visible by default (no opacity: 0 traps).
+ * Generates an animated, responsive, high-contrast SVG representation of GitHub contributions
+ * themed as a classic arcade Breakout / Codebreaker game.
+ * Uses native SMIL animations (<animateTransform>, <animate>) for reliable rendering on GitHub.
  */
-export function renderTetrisSvg(normalized, options = {}) {
+export function renderBreakoutSvg(normalized, options = {}) {
   const { grid, stats, numWeeks } = normalized;
   const username = options.username || 'OKOLIMO-Joseph';
   const totalContributions = stats.totalContributions || 0;
@@ -63,11 +63,12 @@ export function renderTetrisSvg(normalized, options = {}) {
   const cellSize = 12;
   const gridWidth = numWeeks * cellPitch - (cellPitch - cellSize);
   const startX = Math.round((svgWidth - gridWidth) / 2);
-  const startY = 82;
-  const loopDuration = options.duration || 8; // 8-second repeating cycle
+  const startY = 74;
+  const paddleY = 234;
+  const cycleTime = 10; // 10-second looping ball/paddle rally
 
   let baseGridSvg = '';
-  let activeBlocksSvg = '';
+  let activeBricksSvg = '';
 
   for (let c = 0; c < numWeeks; c++) {
     const colX = Math.round(startX + c * cellPitch);
@@ -77,101 +78,61 @@ export function renderTetrisSvg(normalized, options = {}) {
       const y = Math.round(startY + r * cellPitch);
       const score = cell.score;
 
-      // 1. Static base slot
-      baseGridSvg += `<rect x="${colX}" y="${y}" width="${cellSize}" height="${cellSize}" rx="2" fill="${PALETTE[0].fill}" stroke="${PALETTE[0].stroke}" stroke-width="0.8" opacity="0.7"/>\n`;
+      // 1. Static base slot (empty matrix grid)
+      baseGridSvg += `<rect x="${colX}" y="${y}" width="${cellSize}" height="${cellSize}" rx="2" fill="${PALETTE[0].fill}" stroke="${PALETTE[0].stroke}" stroke-width="0.8" opacity="0.6"/>\n`;
 
-      // 2. Active contribution block
+      // 2. Active contribution brick
       if (score > 0) {
         const palette = PALETTE[score];
         const countTooltip = `${cell.count} contribution${cell.count === 1 ? '' : 's'} on ${cell.date || 'date'}`;
-        // Delay calculated so blocks drop in a wave from left to right
-        const dropDelay = ((c / numWeeks) * (loopDuration * 0.45) + (r * 0.04)).toFixed(2);
+        const pulseDelay = ((c / numWeeks) * 4 + r * 0.1).toFixed(2);
 
-        // SMIL <animateTransform> drops the block into position then locks it in place
-        activeBlocksSvg += `
+        activeBricksSvg += `
         <g transform="translate(${colX}, ${y})">
           <title>${escapeXml(countTooltip)}</title>
-          <g>
-            <animateTransform
-              attributeName="transform"
-              type="translate"
-              values="0,-75; 0,0; 0,-3; 0,0; 0,0; 0,0"
-              keyTimes="0; 0.18; 0.22; 0.26; 0.92; 1"
-              dur="${loopDuration}s"
-              begin="${dropDelay}s"
-              repeatCount="indefinite"
-            />
-            <rect x="0" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="${palette.fill}" stroke="${palette.stroke}" stroke-width="1.2" />
-            <line x1="2" y1="2" x2="${cellSize - 2}" y2="2" stroke="${palette.line}" stroke-width="0.8" stroke-opacity="0.8" />
-          </g>
+          <rect x="0" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="${palette.fill}" stroke="${palette.stroke}" stroke-width="1.2">
+            <animate attributeName="opacity" values="0.85;1;0.9;1" dur="4s" begin="${pulseDelay}s" repeatCount="indefinite" />
+          </rect>
+          <line x1="2" y1="2" x2="${cellSize - 2}" y2="2" stroke="${palette.line}" stroke-width="0.8" stroke-opacity="0.8" />
         </g>`;
       }
     }
   }
 
-  // Animated falling Tetromino pieces (I, O, T, L) that drop over active columns
-  const tetrominoesSvg = `
-    <!-- Falling T-Tetromino -->
-    <g>
-      <animateTransform
-        attributeName="transform"
-        type="translate"
-        values="${startX + 28 * cellPitch},25; ${startX + 28 * cellPitch},${startY + 3 * cellPitch}"
-        keyTimes="0; 1"
-        dur="3.2s"
-        begin="0.5s"
-        repeatCount="indefinite"
-      />
-      <animate attributeName="opacity" values="0; 1; 1; 0" keyTimes="0; 0.15; 0.85; 1" dur="3.2s" begin="0.5s" repeatCount="indefinite" />
-      <rect x="0" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="#818cf8" stroke="#ffffff" stroke-width="0.8" />
-      <rect x="${cellPitch}" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="#818cf8" stroke="#ffffff" stroke-width="0.8" />
-      <rect x="${cellPitch * 2}" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="#818cf8" stroke="#ffffff" stroke-width="0.8" />
-      <rect x="${cellPitch}" y="${cellPitch}" width="${cellSize}" height="${cellSize}" rx="2" fill="#818cf8" stroke="#ffffff" stroke-width="0.8" />
-    </g>
-
-    <!-- Falling I-Tetromino -->
-    <g>
-      <animateTransform
-        attributeName="transform"
-        type="translate"
-        values="${startX + 44 * cellPitch},20; ${startX + 44 * cellPitch},${startY + 2 * cellPitch}"
-        keyTimes="0; 1"
-        dur="2.8s"
-        begin="2s"
-        repeatCount="indefinite"
-      />
-      <animate attributeName="opacity" values="0; 1; 1; 0" keyTimes="0; 0.15; 0.85; 1" dur="2.8s" begin="2s" repeatCount="indefinite" />
-      <rect x="0" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="#00f2fe" stroke="#ffffff" stroke-width="0.8" />
-      <rect x="0" y="${cellPitch}" width="${cellSize}" height="${cellSize}" rx="2" fill="#00f2fe" stroke="#ffffff" stroke-width="0.8" />
-      <rect x="0" y="${cellPitch * 2}" width="${cellSize}" height="${cellSize}" rx="2" fill="#00f2fe" stroke="#ffffff" stroke-width="0.8" />
-      <rect x="0" y="${cellPitch * 3}" width="${cellSize}" height="${cellSize}" rx="2" fill="#00f2fe" stroke="#ffffff" stroke-width="0.8" />
-    </g>
-
-    <!-- Falling O-Tetromino -->
-    <g>
-      <animateTransform
-        attributeName="transform"
-        type="translate"
-        values="${startX + 14 * cellPitch},30; ${startX + 14 * cellPitch},${startY + 4 * cellPitch}"
-        keyTimes="0; 1"
-        dur="3.6s"
-        begin="4s"
-        repeatCount="indefinite"
-      />
-      <animate attributeName="opacity" values="0; 1; 1; 0" keyTimes="0; 0.15; 0.85; 1" dur="3.6s" begin="4s" repeatCount="indefinite" />
-      <rect x="0" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="#facc15" stroke="#ffffff" stroke-width="0.8" />
-      <rect x="${cellPitch}" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="#facc15" stroke="#ffffff" stroke-width="0.8" />
-      <rect x="0" y="${cellPitch}" width="${cellSize}" height="${cellSize}" rx="2" fill="#facc15" stroke="#ffffff" stroke-width="0.8" />
-      <rect x="${cellPitch}" y="${cellPitch}" width="${cellSize}" height="${cellSize}" rx="2" fill="#facc15" stroke="#ffffff" stroke-width="0.8" />
-    </g>
-  `;
-
-  // Weekday indicators
+  // Weekday indicators for Sun (0), Tue (2), Thu (4), Sat (6)
   const weekdaysSvg = `
     <text x="${startX - 12}" y="${startY + 0 * cellPitch + 9.5}" text-anchor="end" class="matrix-label">SUN</text>
     <text x="${startX - 12}" y="${startY + 2 * cellPitch + 9.5}" text-anchor="end" class="matrix-label">TUE</text>
     <text x="${startX - 12}" y="${startY + 4 * cellPitch + 9.5}" text-anchor="end" class="matrix-label">THU</text>
     <text x="${startX - 12}" y="${startY + 6 * cellPitch + 9.5}" text-anchor="end" class="matrix-label">SAT</text>
+  `;
+
+  // Animated Breakout Paddle (synchronizes horizontal intercept positions)
+  // Rebounds at 0s, 3.6s, 6.8s, 10s
+  const paddlePath = `
+    ${startX + 140},${paddleY};
+    ${startX + 320},${paddleY};
+    ${startX + 500},${paddleY};
+    ${startX + 440},${paddleY};
+    ${startX + 620},${paddleY};
+    ${startX + 280},${paddleY};
+    ${startX + 100},${paddleY};
+    ${startX + 140},${paddleY}
+  `;
+
+  // Animated Bouncing Energy Orb (Calculated realistic ricochets off paddle, ceiling, and walls)
+  const ballPath = `
+    ${startX + 175},${paddleY - 4};
+    ${startX + 310},130;
+    ${startX + 460},60;
+    ${startX + 590},140;
+    ${startX + 475},${paddleY - 4};
+    ${startX + 680},120;
+    ${startX + 780},160;
+    ${startX + 315},${paddleY - 4};
+    ${startX + 180},110;
+    ${startX + 80},150;
+    ${startX + 175},${paddleY - 4}
   `;
 
   return `<?xml version="1.0" encoding="utf-8"?>
@@ -188,6 +149,18 @@ export function renderTetrisSvg(normalized, options = {}) {
       <stop offset="50%" stop-color="#3b82f6" stop-opacity="0.6" />
       <stop offset="100%" stop-color="#6366f1" stop-opacity="0.1" />
     </linearGradient>
+
+    <linearGradient id="paddle-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f2fe" />
+      <stop offset="50%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+
+    <radialGradient id="ball-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="60%" stop-color="#00f2fe" />
+      <stop offset="100%" stop-color="#0284c7" stop-opacity="0" />
+    </radialGradient>
 
     <filter id="subtle-glow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="2.5" result="blur" />
@@ -243,37 +216,63 @@ export function renderTetrisSvg(normalized, options = {}) {
   <!-- Technical Header Strip -->
   <g transform="translate(24, 28)">
     <rect x="0" y="0" width="8" height="8" rx="1.5" fill="#00f2fe" filter="url(#subtle-glow)" />
-    <text x="16" y="8" class="terminal-title">// COMMIT TETRIS</text>
-    <text x="162" y="8" class="badge-sub">v2.4 [CONTRIBUTION MATRIX]</text>
+    <text x="16" y="8" class="terminal-title">// COMMIT BREAKOUT</text>
+    <text x="178" y="8" class="badge-sub">v3.0 [CODEBREAKER ENGINE]</text>
 
     <!-- Top Right Telemetry Stats -->
     <text x="${svgWidth - 48}" y="8" text-anchor="end" class="stats-text">
-      TOTAL: <tspan class="stats-val">${totalContributions}</tspan> COMMITS  |  ACTIVE: <tspan class="stats-val">${activeDays}</tspan> DAYS  |  STREAK: <tspan class="stats-val">${longestStreak}</tspan> DAYS
+      COMMITS: <tspan class="stats-val">${totalContributions}</tspan>  |  DAYS: <tspan class="stats-val">${activeDays}</tspan>  |  STREAK: <tspan class="stats-val">${longestStreak}</tspan>D  |  PADDLE: <tspan class="stats-val">ACTIVE</tspan>
     </text>
   </g>
 
-  <!-- Subtle Matrix Baseline / Guard Rails -->
-  <line x1="${startX - 20}" y1="55" x2="${startX + gridWidth + 20}" y2="55" stroke="#1e293b" stroke-width="0.8" stroke-dasharray="4,4" />
+  <!-- Upper Wall / Boundary Rail -->
+  <line x1="${startX - 20}" y1="52" x2="${startX + gridWidth + 20}" y2="52" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4" />
 
   <!-- Weekday Labels -->
   <g>${weekdaysSvg}</g>
 
-  <!-- Base Grid (Empty Cells) -->
+  <!-- Base Grid (Empty Bricks) -->
   <g id="base-grid">${baseGridSvg}</g>
 
-  <!-- Active Contribution Blocks (Always Visible + Falling Drop Wave) -->
-  <g id="active-blocks">${activeBlocksSvg}</g>
+  <!-- Active Contribution Bricks (Always Visible Heatmap) -->
+  <g id="active-bricks">${activeBricksSvg}</g>
 
-  <!-- Dynamic Falling Tetrominoes -->
-  <g id="falling-tetrominoes">${tetrominoesSvg}</g>
+  <!-- Paddle Motion Track -->
+  <line x1="${startX - 20}" y1="${paddleY + 12}" x2="${startX + gridWidth + 20}" y2="${paddleY + 12}" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3" />
 
-  <!-- Bottom Matrix Baseline -->
-  <line x1="${startX - 20}" y1="${startY + 7 * cellPitch + 6}" x2="${startX + gridWidth + 20}" y2="${startY + 7 * cellPitch + 6}" stroke="#1e293b" stroke-width="0.8" stroke-dasharray="4,4" />
+  <!-- Dynamic Animated Paddle -->
+  <g id="breakout-paddle">
+    <animateTransform
+      attributeName="transform"
+      type="translate"
+      values="${paddlePath.replace(/\s+/g, ' ').trim()}"
+      keyTimes="0; 0.18; 0.35; 0.52; 0.68; 0.82; 0.94; 1"
+      dur="${cycleTime}s"
+      repeatCount="indefinite"
+    />
+    <rect x="0" y="0" width="70" height="7" rx="3.5" fill="url(#paddle-grad)" stroke="#ffffff" stroke-width="0.8" filter="url(#subtle-glow)" />
+    <line x1="10" y1="3.5" x2="60" y2="3.5" stroke="#ffffff" stroke-width="1" stroke-linecap="round" />
+  </g>
 
-  <!-- Footer Technical Strip: Buffer & Intensity Legend -->
-  <g transform="translate(24, ${svgHeight - 24})">
+  <!-- Dynamic Animated Energy Orb (Bouncing Ball) -->
+  <g id="breakout-ball">
+    <animateTransform
+      attributeName="transform"
+      type="translate"
+      values="${ballPath.replace(/\s+/g, ' ').trim()}"
+      keyTimes="0; 0.10; 0.19; 0.27; 0.36; 0.46; 0.53; 0.68; 0.79; 0.87; 1"
+      dur="${cycleTime}s"
+      repeatCount="indefinite"
+    />
+    <!-- Energy Core & Outer Glow -->
+    <circle cx="0" cy="0" r="7" fill="url(#ball-glow)" opacity="0.4" />
+    <circle cx="0" cy="0" r="4" fill="#ffffff" stroke="#00f2fe" stroke-width="1.5" filter="url(#subtle-glow)" />
+  </g>
+
+  <!-- Footer Technical Strip: Controls & Intensity Legend -->
+  <g transform="translate(24, ${svgHeight - 20})">
     <text x="0" y="8" class="legend-text" fill="#64748b">
-      BUFFER: [ <tspan fill="#00f2fe">I</tspan> · <tspan fill="#38bdf8">T</tspan> · <tspan fill="#818cf8">Z</tspan> · <tspan fill="#10b981">L</tspan> · <tspan fill="#facc15">O</tspan> ]
+      DEFLECTION ENGINE: [ <tspan fill="#00f2fe">BALL: 1.2M OPS/S</tspan> · <tspan fill="#38bdf8">ANGLE: DYNAMIC</tspan> · <tspan fill="#10b981">RALLY: CONTINUOUS</tspan> ]
     </text>
 
     <g transform="translate(${svgWidth - 280}, 0)">
