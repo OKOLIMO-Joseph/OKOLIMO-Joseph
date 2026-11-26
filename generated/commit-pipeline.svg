@@ -89,7 +89,7 @@
 
     <!-- Top Right Telemetry Stats -->
     <text x="872" y="8" text-anchor="end" class="stats-text">
-      BRANCH: <tspan class="stats-val">main</tspan>  |  JOBS: <tspan class="stats-val">355 PASSED</tspan>  |  STREAK: <tspan class="stats-val">9D</tspan>  |  HEALTH: <tspan class="stats-val" fill="#10b981">99.4%</tspan>
+      BRANCH: <tspan class="stats-val">main</tspan>  |  JOBS: <tspan class="stats-val">356 PASSED</tspan>  |  STREAK: <tspan class="stats-val">9D</tspan>  |  HEALTH: <tspan class="stats-val" fill="#10b981">99.4%</tspan>
     </text>
   </g>
 
@@ -1043,11 +1043,11 @@
           <line x1="2" y1="2" x2="10" y2="2" stroke="#e0f2fe" stroke-width="0.8" stroke-opacity="0.8" />
         </g>
         <g transform="translate(849, 183)">
-          <title>Build #369: 6 commits on 2026-11-26 [PASSED]</title>
-          <rect x="0" y="0" width="12" height="12" rx="2" fill="#064e3b" stroke="#10b981" stroke-width="1.2">
+          <title>Build #369: 7 commits on 2026-11-26 [PASSED]</title>
+          <rect x="0" y="0" width="12" height="12" rx="2" fill="#0284c7" stroke="#38bdf8" stroke-width="1.2">
             <animate attributeName="opacity" values="0.85;1;0.9;1" dur="4s" begin="3.26s" repeatCount="indefinite" />
           </rect>
-          <line x1="2" y1="2" x2="10" y2="2" stroke="#34d399" stroke-width="0.8" stroke-opacity="0.8" />
+          <line x1="2" y1="2" x2="10" y2="2" stroke="#7dd3fc" stroke-width="0.8" stroke-opacity="0.8" />
         </g></g>
 
   <!-- Continuous Laser Telemetry Scanline -->
