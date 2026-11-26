@@ -17,14 +17,14 @@
 
 ---
 
-### 🕹️ // COMMIT BREAKOUT: CODEBREAKER
+### ⚙️ // CI/CD PIPELINE MATRIX: BUILD RUNNER
 
 <p align="center">
-  <img src="generated/commit-breakout.svg" alt="Joseph Okolimo GitHub Contribution Breakout Codebreaker Matrix" width="100%" />
+  <img src="generated/commit-pipeline.svg" alt="Joseph Okolimo GitHub Contribution CI/CD Pipeline Matrix" width="100%" />
 </p>
 
 <p align="center">
-  <sub>My GitHub contributions transformed into an arcade Breakout matrix with an automated deflection engine.</sub>
+  <sub>Real-time CI/CD pipeline matrix mapping 354 verified automated builds across 53 weeks.</sub>
 </p>
 
 ---

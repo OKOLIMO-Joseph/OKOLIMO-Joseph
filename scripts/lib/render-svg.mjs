@@ -1,33 +1,33 @@
 /**
- * High-contrast cybersecurity & software engineering palette mapped by contribution level (0-4).
- * Vibrant neon-tinted bricks optimized for dark backgrounds.
+ * CI/CD Pipeline & Build Matrix color palette.
+ * Colors represent automated pipeline status and deployment throughput.
  */
 const PALETTE = {
-  // Level 0: Empty brick slot
+  // Level 0: Idle / Skipped
   0: {
     fill: '#0f172a',
     stroke: '#1e293b',
     line: '#334155'
   },
-  // Level 1: Low activity (Deep Emerald)
+  // Level 1: Light build (Lint / Unit tests passed)
   1: {
     fill: '#064e3b',
     stroke: '#10b981',
     line: '#34d399'
   },
-  // Level 2: Moderate activity (Electric Teal)
+  // Level 2: Moderate build (Integration & API suites passed)
   2: {
     fill: '#0284c7',
     stroke: '#38bdf8',
     line: '#7dd3fc'
   },
-  // Level 3: High activity (Cobalt / Indigo Pulse)
+  // Level 3: Heavy build (Full end-to-end + Security scan passed)
   3: {
     fill: '#4f46e5',
     stroke: '#818cf8',
     line: '#a5b4fc'
   },
-  // Level 4: Hyper-activity / Brick Breaker Critical (Neon Cyan)
+  // Level 4: Release deployment (Docker build & Cloud Run production deploy)
   4: {
     fill: '#00f2fe',
     stroke: '#ffffff',
@@ -46,11 +46,11 @@ function escapeXml(str) {
 }
 
 /**
- * Generates an animated, responsive, high-contrast SVG representation of GitHub contributions
- * themed as a classic arcade Breakout / Codebreaker game.
- * Uses native SMIL animations (<animateTransform>, <animate>) for reliable rendering on GitHub.
+ * Generates an automated, responsive CI/CD Pipeline & Build Matrix SVG representation
+ * of GitHub contributions.
+ * Incorporates automated workflow stages, telemetry metrics, and a scanning deployment beam.
  */
-export function renderBreakoutSvg(normalized, options = {}) {
+export function renderPipelineSvg(normalized, options = {}) {
   const { grid, stats, numWeeks } = normalized;
   const username = options.username || 'OKOLIMO-Joseph';
   const totalContributions = stats.totalContributions || 0;
@@ -58,17 +58,15 @@ export function renderBreakoutSvg(normalized, options = {}) {
   const longestStreak = stats.longestStreak || 0;
 
   const svgWidth = 920;
-  const svgHeight = 280;
+  const svgHeight = 310;
   const cellPitch = 15.2;
   const cellSize = 12;
   const gridWidth = numWeeks * cellPitch - (cellPitch - cellSize);
   const startX = Math.round((svgWidth - gridWidth) / 2);
-  const startY = 74;
-  const paddleY = 234;
-  const cycleTime = 10; // 10-second looping ball/paddle rally
+  const startY = 122;
 
   let baseGridSvg = '';
-  let activeBricksSvg = '';
+  let activeBuildsSvg = '';
 
   for (let c = 0; c < numWeeks; c++) {
     const colX = Math.round(startX + c * cellPitch);
@@ -78,16 +76,16 @@ export function renderBreakoutSvg(normalized, options = {}) {
       const y = Math.round(startY + r * cellPitch);
       const score = cell.score;
 
-      // 1. Static base slot (empty matrix grid)
+      // 1. Static base slot (idle pipeline slot)
       baseGridSvg += `<rect x="${colX}" y="${y}" width="${cellSize}" height="${cellSize}" rx="2" fill="${PALETTE[0].fill}" stroke="${PALETTE[0].stroke}" stroke-width="0.8" opacity="0.6"/>\n`;
 
-      // 2. Active contribution brick
+      // 2. Active build pipeline execution
       if (score > 0) {
         const palette = PALETTE[score];
-        const countTooltip = `${cell.count} contribution${cell.count === 1 ? '' : 's'} on ${cell.date || 'date'}`;
-        const pulseDelay = ((c / numWeeks) * 4 + r * 0.1).toFixed(2);
+        const countTooltip = `Build #${c * 7 + r + 1}: ${cell.count} commit${cell.count === 1 ? '' : 's'} on ${cell.date || 'date'} [PASSED]`;
+        const pulseDelay = ((c / numWeeks) * 3 + r * 0.08).toFixed(2);
 
-        activeBricksSvg += `
+        activeBuildsSvg += `
         <g transform="translate(${colX}, ${y})">
           <title>${escapeXml(countTooltip)}</title>
           <rect x="0" y="0" width="${cellSize}" height="${cellSize}" rx="2" fill="${palette.fill}" stroke="${palette.stroke}" stroke-width="1.2">
@@ -107,33 +105,46 @@ export function renderBreakoutSvg(normalized, options = {}) {
     <text x="${startX - 12}" y="${startY + 6 * cellPitch + 9.5}" text-anchor="end" class="matrix-label">SAT</text>
   `;
 
-  // Animated Breakout Paddle (synchronizes horizontal intercept positions)
-  // Rebounds at 0s, 3.6s, 6.8s, 10s
-  const paddlePath = `
-    ${startX + 140},${paddleY};
-    ${startX + 320},${paddleY};
-    ${startX + 500},${paddleY};
-    ${startX + 440},${paddleY};
-    ${startX + 620},${paddleY};
-    ${startX + 280},${paddleY};
-    ${startX + 100},${paddleY};
-    ${startX + 140},${paddleY}
-  `;
+  // Top CI/CD Stage Badges across the horizontal workflow track
+  const stages = [
+    { name: '1. LINT & TYPECHECK', status: 'PASS', color: '#10b981' },
+    { name: '2. TEST SUITE', status: 'PASS', color: '#10b981' },
+    { name: '3. SAST & SEC-AUDIT', status: 'PASS', color: '#38bdf8' },
+    { name: '4. DOCKER BUILD', status: 'PASS', color: '#818cf8' },
+    { name: '5. CLOUD RUN DEPLOY', status: 'LIVE', color: '#00f2fe' }
+  ];
 
-  // Animated Bouncing Energy Orb (Calculated realistic ricochets off paddle, ceiling, and walls)
-  const ballPath = `
-    ${startX + 175},${paddleY - 4};
-    ${startX + 310},130;
-    ${startX + 460},60;
-    ${startX + 590},140;
-    ${startX + 475},${paddleY - 4};
-    ${startX + 680},120;
-    ${startX + 780},160;
-    ${startX + 315},${paddleY - 4};
-    ${startX + 180},110;
-    ${startX + 80},150;
-    ${startX + 175},${paddleY - 4}
-  `;
+  const stageWidth = 146;
+  const stageGap = 20;
+  const stagesStartX = Math.round((svgWidth - (stages.length * stageWidth + (stages.length - 1) * stageGap)) / 2);
+
+  let stagesSvg = '';
+  for (let i = 0; i < stages.length; i++) {
+    const s = stages[i];
+    const x = stagesStartX + i * (stageWidth + stageGap);
+    stagesSvg += `
+      <!-- Stage ${i + 1} -->
+      <g transform="translate(${x}, 58)">
+        <rect x="0" y="0" width="${stageWidth}" height="28" rx="4" fill="#0d1424" stroke="#1e293b" stroke-width="1" />
+        <rect x="0" y="0" width="3" height="28" rx="1.5" fill="${s.color}" />
+        <text x="10" y="18" class="stage-name">${s.name}</text>
+        <rect x="${stageWidth - 42}" y="6" width="34" height="16" rx="3" fill="#064e3b" stroke="${s.color}" stroke-width="0.8" />
+        <text x="${stageWidth - 25}" y="17.5" text-anchor="middle" class="stage-status" fill="${s.color}">✓ ${s.status}</text>
+      </g>
+    `;
+
+    // Connector arrow with animated data packet pulse
+    if (i < stages.length - 1) {
+      const arrowX = x + stageWidth + 3;
+      stagesSvg += `
+        <line x1="${arrowX}" y1="72" x2="${arrowX + 14}" y2="72" stroke="#334155" stroke-width="1.5" stroke-dasharray="2,2" />
+        <!-- Data Packet Pulse -->
+        <circle cx="0" cy="72" r="2.5" fill="#00f2fe">
+          <animate attributeName="cx" values="${arrowX}; ${arrowX + 14}" dur="1.8s" begin="${(i * 0.35).toFixed(2)}s" repeatCount="indefinite" />
+        </circle>
+      `;
+    }
+  }
 
   return `<?xml version="1.0" encoding="utf-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgWidth} ${svgHeight}" width="100%" height="100%">
@@ -146,21 +157,15 @@ export function renderBreakoutSvg(normalized, options = {}) {
 
     <linearGradient id="header-line" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.9" />
-      <stop offset="50%" stop-color="#3b82f6" stop-opacity="0.6" />
+      <stop offset="50%" stop-color="#10b981" stop-opacity="0.6" />
       <stop offset="100%" stop-color="#6366f1" stop-opacity="0.1" />
     </linearGradient>
 
-    <linearGradient id="paddle-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#00f2fe" />
-      <stop offset="50%" stop-color="#38bdf8" />
-      <stop offset="100%" stop-color="#3b82f6" />
+    <linearGradient id="scan-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00f2fe" stop-opacity="0" />
+      <stop offset="50%" stop-color="#00f2fe" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#00f2fe" stop-opacity="0" />
     </linearGradient>
-
-    <radialGradient id="ball-glow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="60%" stop-color="#00f2fe" />
-      <stop offset="100%" stop-color="#0284c7" stop-opacity="0" />
-    </radialGradient>
 
     <filter id="subtle-glow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="2.5" result="blur" />
@@ -180,8 +185,19 @@ export function renderBreakoutSvg(normalized, options = {}) {
       font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
       font-size: 11px;
       font-weight: 600;
-      fill: #00f2fe;
+      fill: #10b981;
       letter-spacing: 0.5px;
+    }
+    .stage-name {
+      font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      fill: #cbd5e1;
+    }
+    .stage-status {
+      font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: 8px;
+      font-weight: 700;
     }
     .stats-text {
       font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
@@ -215,76 +231,62 @@ export function renderBreakoutSvg(normalized, options = {}) {
 
   <!-- Technical Header Strip -->
   <g transform="translate(24, 28)">
-    <rect x="0" y="0" width="8" height="8" rx="1.5" fill="#00f2fe" filter="url(#subtle-glow)" />
-    <text x="16" y="8" class="terminal-title">// COMMIT BREAKOUT</text>
-    <text x="178" y="8" class="badge-sub">v3.0 [CODEBREAKER ENGINE]</text>
+    <rect x="0" y="0" width="8" height="8" rx="1.5" fill="#10b981" filter="url(#subtle-glow)" />
+    <text x="16" y="8" class="terminal-title">// CI/CD PIPELINE MATRIX</text>
+    <text x="215" y="8" class="badge-sub">v4.2 [DEPLOYMENT RUNNER]</text>
 
     <!-- Top Right Telemetry Stats -->
     <text x="${svgWidth - 48}" y="8" text-anchor="end" class="stats-text">
-      COMMITS: <tspan class="stats-val">${totalContributions}</tspan>  |  DAYS: <tspan class="stats-val">${activeDays}</tspan>  |  STREAK: <tspan class="stats-val">${longestStreak}</tspan>D  |  PADDLE: <tspan class="stats-val">ACTIVE</tspan>
+      BRANCH: <tspan class="stats-val">main</tspan>  |  JOBS: <tspan class="stats-val">${totalContributions} PASSED</tspan>  |  STREAK: <tspan class="stats-val">${longestStreak}D</tspan>  |  HEALTH: <tspan class="stats-val" fill="#10b981">99.4%</tspan>
     </text>
   </g>
 
-  <!-- Upper Wall / Boundary Rail -->
-  <line x1="${startX - 20}" y1="52" x2="${startX + gridWidth + 20}" y2="52" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4" />
+  <!-- Horizontal Pipeline Stages Track -->
+  <g id="pipeline-stages">${stagesSvg}</g>
+
+  <!-- Upper Grid Divider -->
+  <line x1="${startX - 20}" y1="102" x2="${startX + gridWidth + 20}" y2="102" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3" />
 
   <!-- Weekday Labels -->
   <g>${weekdaysSvg}</g>
 
-  <!-- Base Grid (Empty Bricks) -->
+  <!-- Base Grid (Idle / Empty Slots) -->
   <g id="base-grid">${baseGridSvg}</g>
 
-  <!-- Active Contribution Bricks (Always Visible Heatmap) -->
-  <g id="active-bricks">${activeBricksSvg}</g>
+  <!-- Active Pipeline Runs (Guaranteed Visible Heatmap) -->
+  <g id="active-builds">${activeBuildsSvg}</g>
 
-  <!-- Paddle Motion Track -->
-  <line x1="${startX - 20}" y1="${paddleY + 12}" x2="${startX + gridWidth + 20}" y2="${paddleY + 12}" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3" />
-
-  <!-- Dynamic Animated Paddle -->
-  <g id="breakout-paddle">
-    <animateTransform
-      attributeName="transform"
-      type="translate"
-      values="${paddlePath.replace(/\s+/g, ' ').trim()}"
-      keyTimes="0; 0.18; 0.35; 0.52; 0.68; 0.82; 0.94; 1"
-      dur="${cycleTime}s"
-      repeatCount="indefinite"
-    />
-    <rect x="0" y="0" width="70" height="7" rx="3.5" fill="url(#paddle-grad)" stroke="#ffffff" stroke-width="0.8" filter="url(#subtle-glow)" />
-    <line x1="10" y1="3.5" x2="60" y2="3.5" stroke="#ffffff" stroke-width="1" stroke-linecap="round" />
+  <!-- Continuous Laser Telemetry Scanline -->
+  <g id="scanline">
+    <line x1="0" y1="${startY - 6}" x2="0" y2="${startY + 7 * cellPitch + 6}" stroke="url(#scan-gradient)" stroke-width="2" filter="url(#subtle-glow)">
+      <animate attributeName="x1" values="${startX - 10}; ${startX + gridWidth + 10}; ${startX - 10}" dur="9s" repeatCount="indefinite" />
+      <animate attributeName="x2" values="${startX - 10}; ${startX + gridWidth + 10}; ${startX - 10}" dur="9s" repeatCount="indefinite" />
+    </line>
   </g>
 
-  <!-- Dynamic Animated Energy Orb (Bouncing Ball) -->
-  <g id="breakout-ball">
-    <animateTransform
-      attributeName="transform"
-      type="translate"
-      values="${ballPath.replace(/\s+/g, ' ').trim()}"
-      keyTimes="0; 0.10; 0.19; 0.27; 0.36; 0.46; 0.53; 0.68; 0.79; 0.87; 1"
-      dur="${cycleTime}s"
-      repeatCount="indefinite"
-    />
-    <!-- Energy Core & Outer Glow -->
-    <circle cx="0" cy="0" r="7" fill="url(#ball-glow)" opacity="0.4" />
-    <circle cx="0" cy="0" r="4" fill="#ffffff" stroke="#00f2fe" stroke-width="1.5" filter="url(#subtle-glow)" />
-  </g>
+  <!-- Lower Boundary Rail -->
+  <line x1="${startX - 20}" y1="${startY + 7 * cellPitch + 6}" x2="${startX + gridWidth + 20}" y2="${startY + 7 * cellPitch + 6}" stroke="#1e293b" stroke-width="1" stroke-dasharray="3,3" />
 
   <!-- Footer Technical Strip: Controls & Intensity Legend -->
-  <g transform="translate(24, ${svgHeight - 20})">
+  <g transform="translate(24, ${svgHeight - 18})">
     <text x="0" y="8" class="legend-text" fill="#64748b">
-      DEFLECTION ENGINE: [ <tspan fill="#00f2fe">BALL: 1.2M OPS/S</tspan> · <tspan fill="#38bdf8">ANGLE: DYNAMIC</tspan> · <tspan fill="#10b981">RALLY: CONTINUOUS</tspan> ]
+      TELEMETRY: [ <tspan fill="#10b981">RUNNER: ACTIVE</tspan> · <tspan fill="#00f2fe">CONTAINERS: GCP CLOUD RUN</tspan> · <tspan fill="#38bdf8">POLICY: ZERO-DEFECT</tspan> ]
     </text>
 
     <g transform="translate(${svgWidth - 280}, 0)">
-      <text x="-8" y="8" text-anchor="end" class="legend-text">LESS</text>
+      <text x="-8" y="8" text-anchor="end" class="legend-text">IDLE</text>
       <rect x="0" y="-1" width="10" height="10" rx="1.5" fill="${PALETTE[0].fill}" stroke="${PALETTE[0].stroke}" stroke-width="0.8" />
       <rect x="14" y="-1" width="10" height="10" rx="1.5" fill="${PALETTE[1].fill}" stroke="${PALETTE[1].stroke}" stroke-width="0.8" />
       <rect x="28" y="-1" width="10" height="10" rx="1.5" fill="${PALETTE[2].fill}" stroke="${PALETTE[2].stroke}" stroke-width="0.8" />
       <rect x="42" y="-1" width="10" height="10" rx="1.5" fill="${PALETTE[3].fill}" stroke="${PALETTE[3].stroke}" stroke-width="0.8" />
       <rect x="56" y="-1" width="10" height="10" rx="1.5" fill="${PALETTE[4].fill}" stroke="${PALETTE[4].stroke}" stroke-width="0.8" />
-      <text x="74" y="8" class="legend-text">MORE ACTIVITY</text>
+      <text x="74" y="8" class="legend-text">HIGH THROUGHPUT</text>
     </g>
   </g>
 </svg>
 `;
 }
+
+// Keep backwards-compatible alias for any existing code
+export const renderTetrisSvg = renderPipelineSvg;
+export const renderBreakoutSvg = renderPipelineSvg;
