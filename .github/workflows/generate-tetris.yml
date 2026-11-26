@@ -1,0 +1,53 @@
+name: Generate Commit Tetris
+
+on:
+  schedule:
+    # Runs at 00:00 UTC every day
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/**'
+      - '.github/workflows/generate-tetris.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build-tetris:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Execute validation test suite
+        run: npm test
+
+      - name: Generate Commit Tetris visualization
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.repository_owner }}
+        run: node scripts/generate-tetris.mjs
+
+      - name: Commit and push updated contribution asset
+        run: |
+          if [ -n "$(git status --porcelain generated/commit-tetris.svg)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add generated/commit-tetris.svg
+            git commit -m "Auto-update Commit Tetris contribution matrix [skip ci]"
+            git push
+          else
+            echo "No contribution matrix changes detected. Skipping commit."
+          fi

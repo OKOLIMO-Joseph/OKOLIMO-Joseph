@@ -1,0 +1,25 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { generateDemoContributions } from '../scripts/lib/fetch-contributions.mjs';
+import { normalizeContributionData } from '../scripts/lib/normalize-data.mjs';
+import { renderTetrisSvg } from '../scripts/lib/render-svg.mjs';
+
+test('renderTetrisSvg generates valid SVG markup with necessary structure', () => {
+  const demo = generateDemoContributions();
+  const normalized = normalizeContributionData(demo);
+  const svg = renderTetrisSvg(normalized);
+
+  assert.ok(svg.startsWith('<?xml'), 'SVG should start with XML declaration');
+  assert.ok(svg.includes('<svg xmlns="http://www.w3.org/2000/svg"'), 'Should contain standard SVG namespace');
+  assert.ok(svg.includes('viewBox="0 0 920 275"'), 'Should have correct viewBox');
+  assert.ok(svg.includes('</svg>'), 'Should have closing svg tag');
+
+  // Verify technical elements
+  assert.ok(svg.includes('// COMMIT TETRIS'), 'Should include title');
+  assert.ok(svg.includes('TOTAL:'), 'Should render totals stat');
+  assert.ok(svg.includes('tetrisDrop'), 'Should embed CSS keyframe animation');
+  assert.ok(svg.includes('prefers-reduced-motion'), 'Should respect accessibility prefers-reduced-motion');
+
+  // Negative security check: no raw script tags
+  assert.ok(!svg.includes('<script'), 'SVG must NOT contain raw script tags for GitHub safety');
+});

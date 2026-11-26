@@ -1,0 +1,21 @@
+{
+  "name": "okolimo-joseph-profile",
+  "version": "1.0.0",
+  "description": "GitHub profile configuration, README, and Commit Tetris contribution visualization generator for Joseph Okolimo",
+  "type": "module",
+  "scripts": {
+    "generate:tetris": "node scripts/generate-tetris.mjs",
+    "generate:tetris:demo": "node scripts/generate-tetris.mjs --demo",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "keywords": [
+    "github-profile",
+    "commit-tetris",
+    "contributions",
+    "svg-animation",
+    "cybersecurity",
+    "software-engineering"
+  ],
+  "author": "Joseph Okolimo <okolimojoseph1@gmail.com>",
+  "license": "MIT"
+}
