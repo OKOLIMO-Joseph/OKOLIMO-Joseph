@@ -9,11 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const REPO_ROOT = path.resolve(__dirname, '..');
 const OUTPUT_DIR = path.join(REPO_ROOT, 'generated');
-
 const GITGRAPH_FILE = path.join(OUTPUT_DIR, 'commit-gitgraph.svg');
-const PIPELINE_FILE = path.join(OUTPUT_DIR, 'commit-pipeline.svg');
-const BREAKOUT_FILE = path.join(OUTPUT_DIR, 'commit-breakout.svg');
-const TETRIS_FILE = path.join(OUTPUT_DIR, 'commit-tetris.svg');
 
 async function main() {
   const isDemo = process.argv.includes('--demo');
@@ -32,9 +28,9 @@ async function main() {
     } catch (err) {
       console.error(`[commit-gitgraph] WARNING: Failed to fetch live GitHub contributions: ${err.message}`);
 
-      // Graceful error handling: preserve existing assets
+      // Graceful error handling: preserve existing asset
       if (fs.existsSync(GITGRAPH_FILE) && fs.statSync(GITGRAPH_FILE).size > 1000) {
-        console.warn(`[commit-gitgraph] Preserving existing assets to avoid breaking public README.`);
+        console.warn(`[commit-gitgraph] Preserving existing asset to avoid breaking public README.`);
         process.exit(0);
       }
 
@@ -52,14 +48,11 @@ async function main() {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   }
 
-  // Write all synchronized assets to ensure all legacy and current references work
+  // Write single canonical Git Graph asset
   fs.writeFileSync(GITGRAPH_FILE, svgContent, 'utf-8');
-  fs.writeFileSync(TETRIS_FILE, svgContent, 'utf-8');
-  fs.writeFileSync(PIPELINE_FILE, svgContent, 'utf-8');
-  fs.writeFileSync(BREAKOUT_FILE, svgContent, 'utf-8');
 
   const fileSizeKb = (Buffer.byteLength(svgContent, 'utf-8') / 1024).toFixed(1);
-  console.log(`[commit-gitgraph] SUCCESS: Written all assets (${fileSizeKb} KB).`);
+  console.log(`[commit-gitgraph] SUCCESS: Written ${GITGRAPH_FILE} (${fileSizeKb} KB).`);
 }
 
 main().catch(err => {

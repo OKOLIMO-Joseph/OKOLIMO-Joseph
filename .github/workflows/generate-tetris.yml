@@ -1,4 +1,4 @@
-name: Generate Commit Breakout
+name: Generate Git Graph
 
 on:
   schedule:
@@ -16,7 +16,7 @@ permissions:
   contents: write
 
 jobs:
-  build-breakout:
+  build-gitgraph:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -34,19 +34,19 @@ jobs:
       - name: Execute validation test suite
         run: npm test
 
-      - name: Generate Commit Breakout visualization
+      - name: Generate Git Graph visualization
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.repository_owner }}
         run: node scripts/generate-tetris.mjs
 
-      - name: Commit and push updated assets
+      - name: Commit and push updated asset
         run: |
-          if [ -n "$(git status --porcelain generated/)" ]; then
+          if [ -n "$(git status --porcelain generated/commit-gitgraph.svg)" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add generated/
-            git commit -m "Auto-update Commit Breakout contribution matrix [skip ci]"
+            git add generated/commit-gitgraph.svg
+            git commit -m "Auto-update Git Graph contribution matrix [skip ci]"
             git push
           else
             echo "No matrix changes detected. Skipping commit."

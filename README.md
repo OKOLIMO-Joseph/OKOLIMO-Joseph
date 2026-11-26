@@ -20,11 +20,11 @@
 ### 🌿 // GIT GRAPH & MERGE FLOW
 
 <p align="center">
-  <img src="generated/commit-tetris.svg?v=5" alt="Joseph Okolimo Git Graph &amp; Merge Tree" width="100%" />
+  <img src="generated/commit-gitgraph.svg" alt="Joseph Okolimo Git Graph &amp; Merge Tree" width="100%" />
 </p>
 
 <p align="center">
-  <sub>Continuous feature branch releases merging into <code>main</code> across 355 verified commits.</sub>
+  <sub>Continuous feature branch releases merging into <code>main</code> across 358 verified commits.</sub>
 </p>
 
 ---
@@ -53,7 +53,7 @@ High-performance parser and timeline correlation engine for mobile money digital
 
 ---
 
-### 🛠️ Technical Stack
+### 🛠️ Core Technical Stack
 
 ```
 ┌───────────────────────────────┬────────────────────────────────────────────────────────┐
