@@ -17,14 +17,14 @@
 
 ---
 
-### 🌿 // GIT COMMITS & MERGE FLOW
+### 🕹️ // COMMIT BREAKOUT: CODEBREAKER
 
 <p align="center">
-  <img src="generated/commit-gitgraph.svg" alt="Joseph Okolimo Git Commits &amp; Branch Merge Flow" width="100%" />
+  <img src="generated/commit-breakout.svg" alt="Joseph Okolimo GitHub Contribution Breakout Codebreaker Matrix" width="100%" />
 </p>
 
 <p align="center">
-  <sub>Live feature branch commits merging into <code>main</code> across 359 verified contributions.</sub>
+  <sub>My GitHub contributions transformed into an arcade Breakout matrix with an automated deflection engine.</sub>
 </p>
 
 ---
